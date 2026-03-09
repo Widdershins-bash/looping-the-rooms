@@ -1,4 +1,5 @@
 import pygame
+from game.tile import Tile
 
 
 pygame.init()
@@ -15,6 +16,8 @@ screen: pygame.Surface = pygame.display.set_mode((600, 600))
 clock: pygame.Clock = pygame.Clock()
 FPS: int = 60
 
+tile: Tile = Tile(surface=screen)
+
 color_seq: float = 0
 running: bool = True
 while running:
@@ -25,6 +28,8 @@ while running:
     green: int = (int(color_seq) + 85) % 255
     blue: int = (int(color_seq) + 170) % 255
     screen.fill((red, green, blue))
+
+    tile.create_platform(width=10, height=10)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
