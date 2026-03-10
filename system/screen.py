@@ -3,8 +3,7 @@ from system.constants import Screen as s, ColorPalette as cp, GameState as gs, F
 
 
 class Screen:
-    def __init__(self, grid_constant: int) -> None:
-        self.grid_constant: int = grid_constant
+    def __init__(self) -> None:
 
         self.logical_width: int = s.LOGICAL_WIDTH
         self.logical_height: int = s.LOGICAL_HEIGHT

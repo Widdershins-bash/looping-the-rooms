@@ -2,10 +2,9 @@ import pygame
 
 pygame.init()
 
-from game.room.tile import Tile
 from system.screen import Screen
 from system.constants import Main, GameState as gs
-from game.room.floor_generator import FloorManager
+from game.world import World
 
 
 def get_delta_time(clock: pygame.Clock, fps: int):
@@ -14,13 +13,10 @@ def get_delta_time(clock: pygame.Clock, fps: int):
     return delta_time
 
 
-screen: Screen = Screen(grid_constant=Main.GRID_CONSTANT)
-tile: Tile = Tile(surface=screen.logical)
-floor_manager: FloorManager = FloorManager()
+screen: Screen = Screen()
+world: World = World(surface=screen.logical, grid_constant=Main.GRID_CONSTANT)
 
 if __name__ == "__main__":
-
-    floor_manager.print_plan()
 
     game_state: gs = gs.PLAY
 
@@ -32,7 +28,8 @@ if __name__ == "__main__":
             if screen.running:
                 screen.handle_events(event=event, game_state=game_state)
 
-        tile.create_platform(width=10, height=10)
+        world.update()
+        world.draw()
 
         screen.scale_flip()
 

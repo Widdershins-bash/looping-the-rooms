@@ -3,13 +3,21 @@ from enum import Enum, auto
 
 
 class Main:
-    GRID_CONSTANT: int = 32  # tile size in px
+    GRID_CONSTANT: int = 6  # tile size in px
 
 
 class Screen:
     LOGICAL_WIDTH: int = 640
     LOGICAL_HEIGHT: int = 360
     FPS: int = 120
+
+
+class Camera:
+    EASING_MULTIPLIER: int = 2
+
+
+class Floor:
+    ROOM_UNIT_SIZE: int = 10
 
 
 class Image:

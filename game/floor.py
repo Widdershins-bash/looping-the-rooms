@@ -1,21 +1,34 @@
 import pygame
 import random
 from enum import Enum, auto
-from system.constants import Main
+from system.constants import Main, Floor as fl
+from game.tile import TileConfiguration
 
 
 class FloorManager:
-    def __init__(self):
+    def __init__(self, surface: pygame.Surface, grid_constant: int):
+        self.surface: pygame.Surface = surface
+        self.grid_constant: int = grid_constant
 
-        self.floor_gen: FloorGenerator = FloorGenerator()
-        self.floor_plan: dict[tuple[int, int], Room] = self.floor_gen.generate_path()
+        self.floor_config: FloorConfiguration = FloorConfiguration()
 
-    def print_plan(self):
-        print(self.floor_plan)
-        print("\n\n" + str(len(self.floor_plan)))
+        self.first_floor: Floor = Floor(
+            surface=self.surface, path=self.floor_config.generate_path(), grid_constant=self.grid_constant
+        )
+        self.floors: list[Floor] = [self.first_floor]
+
+        self.floor_margin: int = self.grid_constant
+
+    def update(self):
+        for floor in self.floors:
+            floor.update()
+
+    def draw(self):
+        for floor in self.floors:
+            floor.draw()
 
 
-class FloorGenerator:
+class FloorConfiguration:
     def __init__(self, rows: int = 4, columns: int = 4) -> None:
         self.rows: int = rows
         self.cols: int = columns
@@ -62,6 +75,7 @@ class FloorGenerator:
         return valid
 
     # TODO in the future, make generate_path retrace it's steps if it has no empty rooms to go to next.
+    # Maybe convert to BSP generation later (if you have more time than you bargained for)
     def generate_path(self) -> dict[tuple[int, int], Room]:
         room_dict: dict[tuple[int, int], Room] = {}
         ent_row, ent_col, ex_row, ex_col = self.select_entrance_exit()
@@ -109,6 +123,39 @@ class FloorGenerator:
         return room_dict
 
 
+class Floor:
+    def __init__(self, surface: pygame.Surface, path: dict[tuple[int, int], Room], grid_constant: int) -> None:
+        self.surface: pygame.Surface = surface
+        self.path: dict[tuple[int, int], Room] = path
+        self.grid_constant: int = grid_constant
+
+        self.margin: int = self.grid_constant
+
+        self.tile_config: TileConfiguration = TileConfiguration(surface=self.surface, grid_constant=self.grid_constant)
+
+    def position_tiles(self):
+        for loc, room in self.path.items():
+            tile_map: list[pygame.Rect] = []
+            start_x: int = loc[1] * (self.margin + self.grid_constant * fl.ROOM_UNIT_SIZE)
+            start_y: int = loc[0] * (self.margin + self.grid_constant * fl.ROOM_UNIT_SIZE)
+
+            for row in range(fl.ROOM_UNIT_SIZE):
+                for col in range(fl.ROOM_UNIT_SIZE):
+                    x: int = col * self.grid_constant + start_x
+                    y: int = row * self.grid_constant + start_y
+                    tile_map.append(self.tile_config.create_tile(x=x, y=y))
+
+            room.tile_map = tile_map
+
+    def update(self):
+        self.position_tiles()
+
+    def draw(self):
+        for room in self.path.values():
+            for tile in room.tile_map:
+                pygame.draw.rect(self.surface, "gray", tile, border_radius=2)
+
+
 class RoomType(Enum):
     ENTRANCE = auto()
     NORMAL = auto()
@@ -130,9 +177,9 @@ class Room:
         self.col: int = col
         self.room_type: RoomType = room_type
 
-        self.size_point: tuple[int, int] = (Main.GRID_CONSTANT * 8, Main.GRID_CONSTANT * 8)
         self.enabled: bool = True
         self.doors: set[Direction] = set()
+        self.tile_map: list[pygame.Rect]
 
     def add_door(self, door: Direction):
         self.doors.add(door)
