@@ -2,9 +2,10 @@ import pygame
 
 pygame.init()
 
-from game.tile import Tile
+from game.room.tile import Tile
 from system.screen import Screen
 from system.constants import Main, GameState as gs
+from game.room.floor_generator import FloorManager
 
 
 def get_delta_time(clock: pygame.Clock, fps: int):
@@ -15,10 +16,12 @@ def get_delta_time(clock: pygame.Clock, fps: int):
 
 screen: Screen = Screen(grid_constant=Main.GRID_CONSTANT)
 tile: Tile = Tile(surface=screen.logical)
+floor_manager: FloorManager = FloorManager()
 
 if __name__ == "__main__":
 
-    color_seq: float = 0
+    floor_manager.print_plan()
+
     game_state: gs = gs.PLAY
 
     while screen.running:
@@ -29,15 +32,8 @@ if __name__ == "__main__":
             if screen.running:
                 screen.handle_events(event=event, game_state=game_state)
 
-        color_seq += 50 * delta_time
-        red: int = int(color_seq) % 255
-        green: int = (int(color_seq) + 85) % 255
-        blue: int = (int(color_seq) + 170) % 255
-        screen.logical.fill((red, green, blue))
-
         tile.create_platform(width=10, height=10)
 
-        screen.draw_overlay()
         screen.scale_flip()
 
     pygame.quit()

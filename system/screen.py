@@ -15,7 +15,6 @@ class Screen:
         self.clock: pygame.Clock = pygame.time.Clock()
 
         self.running: bool = True
-        self.fullscreen: bool = False
 
         self.screen: pygame.Surface = pygame.display.set_mode(
             (self.logical_width, self.logical_height), pygame.RESIZABLE
@@ -25,34 +24,19 @@ class Screen:
         self.viewport: pygame.Rect = pygame.Rect(0, 0, 0, 0)  # used to check mouse -> screen overlap (eventually)
         self.scalar: int = 1
 
-    def display_tips(self) -> None:
-        if not self.fullscreen:
-            note_message: str = "Press F for Fullscreen"
-            note_render: pygame.Surface = self.font.render(note_message, False, cp.BLACK)
-            note_pos: tuple[int, int] = (
-                (self.logical_width - note_render.width) // 2,
-                self.grid_constant + (self.grid_constant - note_render.height) // 2,
-            )
-            self.logical.blit(note_render, note_pos)
-
     def handle_events(self, event: pygame.Event, game_state: gs) -> None:
         if game_state == gs.QUIT or event.type == pygame.QUIT:
             self.running = False
             return
 
         if event.type == pygame.KEYDOWN:
-            self.running = event.key != pygame.K_ESCAPE or self.fullscreen  # temporary escape option for testing
+            self.running = event.key != pygame.K_ESCAPE  # temporary escape option for testing
 
-            if event.key == pygame.K_f:
-                if self.fullscreen:
-                    self.screen = pygame.display.set_mode((self.logical_width, self.logical_height), pygame.RESIZABLE)
+        if event.type == pygame.FULLSCREEN:
+            self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
-                else:
-                    self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-                self.fullscreen = not self.fullscreen
-
-    def draw_overlay(self) -> None:
-        self.display_tips()
+        elif event.type == pygame.WINDOWMINIMIZED:
+            self.screen = pygame.display.set_mode((self.logical_width, self.logical_height), pygame.RESIZABLE)
 
     def scale_flip(self) -> None:
 
