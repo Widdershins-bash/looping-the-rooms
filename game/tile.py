@@ -10,17 +10,43 @@ class TileConfiguration:
         tile: Tile = Tile(surface=self.surface, size=self.size, x=x, y=y, color=color)
         return tile
 
+    def create_door(self, w: int, h: int, x: int, y: int, color: pygame.typing.ColorLike) -> Door:
+        door: Door = Door(surface=self.surface, w=w, h=h, x=x, y=y, color=color)
+        return door
 
-class Tile:
-    def __init__(self, surface: pygame.Surface, size: int, x: int, y: int, color: pygame.typing.ColorLike) -> None:
+
+class BaseTile:
+    def __init__(self, surface: pygame.Surface, x: int, y: int, color: pygame.typing.ColorLike) -> None:
         self.surface: pygame.Surface = surface
-        self.size: int = size
         self.x_pos: float = x
         self.y_pos: float = y
         self.color: pygame.typing.ColorLike = color
 
+        self.width: int = 0
+        self.height: int = 0
+
     def get_rect(self):
-        return pygame.Rect(self.x_pos, self.y_pos, self.size, self.size)
+        return pygame.Rect(self.x_pos, self.y_pos, self.width, self.height)
+
+    def on_screen(self):
+        check_x: bool = self.x_pos > -self.width and self.x_pos < self.surface.width
+        check_y: bool = self.y_pos > -self.height and self.y_pos < self.surface.height
+
+        return True if check_x and check_y else False
 
     def draw(self):
-        pygame.draw.rect(self.surface, self.color, self.get_rect(), border_radius=2)
+        if self.on_screen:
+            pygame.draw.rect(self.surface, self.color, self.get_rect(), border_radius=2)
+
+
+class Tile(BaseTile):
+    def __init__(self, surface: pygame.Surface, size: int, x: int, y: int, color: pygame.typing.ColorLike) -> None:
+        super().__init__(surface, x, y, color)
+        self.size: int = size
+        self.width, self.height = self.size, self.size
+
+
+class Door(BaseTile):
+    def __init__(self, surface: pygame.Surface, w: int, h: int, x: int, y: int, color: pygame.typing.ColorLike) -> None:
+        super().__init__(surface, x, y, color)
+        self.width, self.height = w, h

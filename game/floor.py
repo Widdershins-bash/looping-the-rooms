@@ -2,7 +2,7 @@ import pygame
 import random
 from enum import Enum, auto
 from system.constants import Main, Floor as fl, ColorPalette as cp
-from game.tile import TileConfiguration, Tile
+from game.tile import TileConfiguration, BaseTile
 import math
 
 
@@ -185,7 +185,7 @@ class Floor:
 
     def draw(self):
         for room in self.path.values():
-            room.draw(surface=self.surface)
+            room.draw()
 
 
 class RoomType(Enum):
@@ -225,14 +225,26 @@ class Room:
         self.start_y: float = self.row * (self.spacing + self.height) + (self.surface.height - self.height) // 2
 
         self.door_pos_dict: dict[Direction, tuple[int, int]] = {
-            Direction.SOUTH: (1, 2),
-            Direction.NORTH: (1, 0),
-            Direction.WEST: (0, 1),
-            Direction.EAST: (2, 1),
+            Direction.SOUTH: (
+                self.start_x + ((self.width - self.grid_constant * 2) // 2),
+                self.start_y + self.height - self.grid_constant // 2,
+            ),
+            Direction.NORTH: (
+                self.start_x + ((self.width - self.grid_constant * 2) // 2),
+                self.start_y - (self.grid_constant // 2),
+            ),
+            Direction.WEST: (
+                self.start_x - (self.grid_constant // 2),
+                self.start_y + ((self.height - self.grid_constant * 2) // 2),
+            ),
+            Direction.EAST: (
+                self.start_x + self.width - self.grid_constant // 2,
+                self.start_y + ((self.height - self.grid_constant * 2) // 2),
+            ),
         }
 
-        self.tile_map: list[Tile] = self.set_tiles()
-        self.door_map: list[Tile] = []
+        self.tile_map: list[BaseTile] = self.set_floor()
+        self.door_map: list[BaseTile] = []
 
     def add_door(self, door: Direction):
         self.doors.add(door)
@@ -241,8 +253,8 @@ class Room:
     def get_loc(self) -> tuple[int, int]:
         return self.row, self.col
 
-    def set_tiles(self) -> list[Tile]:
-        tiles: list[Tile] = []
+    def set_floor(self) -> list[BaseTile]:
+        tiles: list[BaseTile] = []
         for row in range(fl.ROOM_UNIT_SIZE):
             for col in range(fl.ROOM_UNIT_SIZE):
                 x: float = col * self.grid_constant + self.start_x
@@ -251,15 +263,33 @@ class Room:
 
         return tiles
 
-    def set_doors(self) -> list[Tile]:
-        base_x: int = self.width // 2
-        base_y: int = self.height // 2
-
-        doors: list[Tile] = []
+    def set_doors(self) -> list[BaseTile]:
+        doors: list[BaseTile] = []
         for door in self.doors:
-            converted_x: float = self.start_x + base_x * self.door_pos_dict[door][0]
-            converted_y: float = self.start_y + base_y * self.door_pos_dict[door][1]
-            doors.append(self.tile_config.create_tile(x=int(converted_x), y=int(converted_y), color=cp.GRAY))
+            pos: tuple[int, int] = self.door_pos_dict[door]
+            converted_x: float = pos[0]
+            converted_y: float = pos[1]
+            if door == Direction.EAST or door == Direction.WEST:
+                doors.append(
+                    self.tile_config.create_door(
+                        w=self.grid_constant,
+                        h=self.grid_constant * 2,
+                        x=int(converted_x),
+                        y=int(converted_y),
+                        color=cp.GRAY,
+                    )
+                )
+
+            else:
+                doors.append(
+                    self.tile_config.create_door(
+                        w=self.grid_constant * 2,
+                        h=self.grid_constant,
+                        x=int(converted_x),
+                        y=int(converted_y),
+                        color=cp.GRAY,
+                    )
+                )
 
         return doors
 
@@ -268,6 +298,6 @@ class Room:
             tile.x_pos += camera_offset[0]
             tile.y_pos += camera_offset[1]
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self):
         for tile in self.tile_map + self.door_map:
             tile.draw()

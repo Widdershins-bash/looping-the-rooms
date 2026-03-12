@@ -3,7 +3,7 @@ from enum import Enum, auto
 
 
 class Main:
-    GRID_CONSTANT: int = 8  # tile size in px
+    GRID_CONSTANT: int = 32  # tile size in px
 
 
 class Screen:
@@ -17,7 +17,7 @@ class Camera:
 
 
 class Player:
-    SPEED: int = Main.GRID_CONSTANT * 5
+    SPEED: int = Main.GRID_CONSTANT * 10
     RADIUS: int = Main.GRID_CONSTANT // 2
 
 
@@ -33,7 +33,6 @@ class Audio:
     AUDIO_PATH: str = "assets/audio/"
 
 
-# color palette
 class ColorPalette:
     BLACK: pygame.typing.ColorLike = "#000000"
     GRAY: pygame.typing.ColorLike = "#666666"
