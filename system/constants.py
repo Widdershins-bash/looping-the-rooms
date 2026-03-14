@@ -12,6 +12,19 @@ class Screen:
     FPS: int = 120
 
 
+class Camera:
+    EASING_MULTIPLIER: int = 2
+
+
+class Player:
+    SPEED: int = Main.GRID_CONSTANT * 10
+    RADIUS: int = Main.GRID_CONSTANT // 2
+
+
+class Floor:
+    ROOM_UNIT_SIZE: int = 10
+
+
 class Image:
     IMAGE_PATH: str = "assets/images/"
 
@@ -20,10 +33,15 @@ class Audio:
     AUDIO_PATH: str = "assets/audio/"
 
 
-# color palette
 class ColorPalette:
-    BLACK: pygame.typing.ColorLike = (0, 0, 0)
-    WHITE: pygame.typing.ColorLike = (255, 255, 255)
+    BLACK: pygame.typing.ColorLike = "#000000"
+    GRAY: pygame.typing.ColorLike = "#666666"
+    WHITE: pygame.typing.ColorLike = "#ffffff"
+
+    LIGHT_GREEN: pygame.typing.ColorLike = "#59ff00"
+    MAGENTA: pygame.typing.ColorLike = "#a600ff"
+    DARK_GREEN: pygame.typing.ColorLike = "#00731f"
+    YELLOW: pygame.typing.ColorLike = "#eaff00"
 
 
 class GameState(Enum):
@@ -36,3 +54,4 @@ class GameState(Enum):
 
 class Font:
     BASE: pygame.Font = pygame.Font("freesansbold.ttf")
+    ACCENTUATED: pygame.Font = pygame.Font("freesansbold.ttf", 40)
