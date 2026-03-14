@@ -20,6 +20,7 @@ class Screen:
         )
 
         self.logical: pygame.Surface = pygame.Surface((self.logical_width, self.logical_height))
+        self.alpha: pygame.Surface = pygame.Surface((self.logical_width, self.logical_height), flags=pygame.SRCALPHA)
         self.viewport: pygame.Rect = pygame.Rect(0, 0, 0, 0)  # used to check mouse -> screen overlap (eventually)
         self.scalar: int = 1
 
@@ -41,6 +42,7 @@ class Screen:
         self.logical.fill(cp.BLACK)
 
     def scale_flip(self) -> None:
+        self.logical.blit(self.alpha)
 
         self.scalar = max(1, min(self.screen.width, self.screen.height) // self.logical_height)
         scale_point: tuple[int, int] = (self.logical_width * self.scalar, self.logical_height * self.scalar)
@@ -52,5 +54,6 @@ class Screen:
 
         self.viewport = pygame.Rect(logical_location, scale_point)
         self.screen.blit(logical_transform, logical_location)
+        self.alpha.fill((0, 0, 0, 0))
 
         pygame.display.flip()

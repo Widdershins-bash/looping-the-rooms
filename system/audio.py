@@ -16,6 +16,9 @@ class SFX:
         converted_volume: float = self.audio_state.volume / 100
 
         self.jump_sfx.set_volume(converted_volume)
+        self.swoosh_sfx.set_volume(converted_volume)
+        self.click_sfx.set_volume(converted_volume)
+        self.hover_sfx.set_volume(converted_volume)
 
 
 class AudioState:

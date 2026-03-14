@@ -170,13 +170,13 @@ class VolumeSlider(Button):
         super().__init__(surface, image, press_image, enabled, action, pos)
 
         self.knob_image: pygame.Surface = knob_image
-        self.x_range: int = bt.SCALED_SLIDER_LENGTH
+        self.x_range: int = bt.SLIDER_LENGTH
         self.volume: int = 50
         self.set_volume: bool = False
         self.knob: SliderKnob = SliderKnob(surface=self.surface, image=self.knob_image, x_range=self.x_range)
 
     def get_knob_pos(self) -> tuple[int, int]:
-        x: int = self.pos[0] + bt.SCALED_SLIDER_START_X
+        x: int = self.pos[0] + bt.SLIDER_START_X
         y: int = self.pos[1] + (self.display_image.height - self.knob.display_image.height) // 2
         return x, y
 

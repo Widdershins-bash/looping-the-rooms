@@ -12,7 +12,7 @@ class FloorManager:
         self.grid_constant: int = grid_constant
 
         self.first_floor_config: FloorConfiguration = FloorConfiguration(
-            surface=self.surface, grid_constant=self.grid_constant, rows=5, columns=5
+            surface=self.surface, grid_constant=self.grid_constant, rows=fl.FLOOR_ROOM_SIZE, columns=fl.FLOOR_ROOM_SIZE
         )
         self.first_floor: Floor = Floor(
             surface=self.surface,

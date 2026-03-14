@@ -3,7 +3,9 @@ from enum import Enum, auto
 
 
 class Main:
-    GRID_CONSTANT: int = 32  # tile size in px
+    BASE_CONSTANT: int = 32  # never used in the game, rather, just used for setting the grid standard
+    GRID_CONSTANT: int = BASE_CONSTANT // 4  # tile size in px
+    BUTTON_CONSTANT: int = BASE_CONSTANT
 
 
 class Screen:
@@ -17,8 +19,8 @@ class Menu:
 
 
 class Button:
-    SCALED_SLIDER_LENGTH: int = 38
-    SCALED_SLIDER_START_X: int = 28
+    SLIDER_LENGTH: int = 88
+    SLIDER_START_X: int = 20
 
 
 class Camera:
@@ -27,16 +29,18 @@ class Camera:
 
 
 class Player:
-    SPEED: int = Main.GRID_CONSTANT * 15
+    SPEED: int = Main.GRID_CONSTANT * 20
     RADIUS: int = 0  # Main.GRID_CONSTANT // 2
 
 
 class Floor:
     ROOM_UNIT_SIZE: int = 10
+    FLOOR_ROOM_SIZE: int = 4
 
 
 class Image:
     IMAGE_PATH: str = "assets/images/"
+    TILE_SCALAR: float = Main.GRID_CONSTANT / Main.BASE_CONSTANT
 
 
 class Audio:
@@ -46,6 +50,7 @@ class Audio:
 class ColorPalette:
     BLACK: pygame.typing.ColorLike = "#000000"
     GRAY: pygame.typing.ColorLike = "#666666"
+    ALPHA_GRAY: pygame.typing.ColorLike = (122, 122, 122, 100)
     WHITE: pygame.typing.ColorLike = "#ffffff"
 
     LIGHT_GREEN: pygame.typing.ColorLike = "#59ff00"

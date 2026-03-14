@@ -14,17 +14,21 @@ class MenuManager:
 
         self.button: ButtonConfig = ButtonConfig(surface=self.surface)
 
-        self.main_menu: Menu = Menu(surface=self.surface, buttons=self.button.main_buttons, active_state=gs.MAIN_MENU)
+        self.main_menu: Menu = Menu(
+            surface=self.surface, buttons=self.button.main_buttons, active_state=gs.MAIN_MENU, bg_color=cp.GRAY
+        )
         self.settings_widget: Menu = Menu(
             surface=self.surface, buttons=[self.button.settings_widget], is_widget=True, active_state=gs.MAIN_MENU
         )
         self.settings_menu: Menu = Menu(
-            surface=self.surface, buttons=self.button.settings_buttons, active_state=gs.SETTINGS
+            surface=self.surface, buttons=self.button.settings_buttons, active_state=gs.SETTINGS, bg_color=cp.GRAY
         )
         self.pause_widget: Menu = Menu(
             surface=self.surface, buttons=[self.button.pause_widget], is_widget=True, active_state=gs.PLAY
         )
-        self.pause_menu: Menu = Menu(surface=self.surface, buttons=self.button.pause_buttons, active_state=gs.PAUSE)
+        self.pause_menu: Menu = Menu(
+            surface=self.surface, buttons=self.button.pause_buttons, active_state=gs.PAUSE, bg_color=cp.ALPHA_GRAY
+        )
 
         self.menus: list[Menu] = [
             self.pause_widget,
