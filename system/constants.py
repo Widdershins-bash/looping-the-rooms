@@ -38,6 +38,8 @@ class ColorPalette:
     GRAY: pygame.typing.ColorLike = "#666666"
     WHITE: pygame.typing.ColorLike = "#ffffff"
 
+    LIGHT_GREEN: pygame.typing.ColorLike = "#59ff00"
+    MAGENTA: pygame.typing.ColorLike = "#a600ff"
     DARK_GREEN: pygame.typing.ColorLike = "#00731f"
     YELLOW: pygame.typing.ColorLike = "#eaff00"
 
@@ -52,3 +54,4 @@ class GameState(Enum):
 
 class Font:
     BASE: pygame.Font = pygame.Font("freesansbold.ttf")
+    ACCENTUATED: pygame.Font = pygame.Font("freesansbold.ttf", 40)

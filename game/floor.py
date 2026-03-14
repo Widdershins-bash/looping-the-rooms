@@ -1,7 +1,7 @@
 import pygame
 import random
 from enum import Enum, auto
-from system.constants import Main, Floor as fl, ColorPalette as cp
+from system.constants import Main, Floor as fl, ColorPalette as cp, Font
 from game.tile import TileConfiguration, BaseTile
 import math
 
@@ -16,7 +16,11 @@ class FloorManager:
         )
 
         self.first_floor: Floor = Floor(
-            surface=self.surface, path=self.floor_config.generate_path(), grid_constant=self.grid_constant
+            surface=self.surface,
+            grid_constant=self.grid_constant,
+            path=self.floor_config.generate_path(),
+            entrance=self.floor_config.entrance,
+            exit=self.floor_config.exit,
         )
         self.floors: list[Floor] = [self.first_floor]
 
@@ -25,6 +29,11 @@ class FloorManager:
     def update(self, camera_offset: tuple[float, float]):
         for floor in self.floors:
             floor.update(camera_offset=camera_offset)
+
+    def display_room_found(self):
+        message: str = "You Found The Exit!"
+        display: pygame.Surface = Font.ACCENTUATED.render(text=message, antialias=True, color=cp.MAGENTA)
+        self.surface.blit(display, ((self.surface.width - display.width) // 2, self.grid_constant * 4))
 
     def draw(self):
         for floor in self.floors:
@@ -37,6 +46,11 @@ class FloorConfiguration:
         self.grid_constant: int = grid_constant
         self.rows: int = rows
         self.cols: int = columns
+
+        self.entrance: tuple[int, int]
+        self.exit: tuple[int, int]
+
+        self.entrance, self.exit = self.select_entrance_exit()
 
         self.movement_dict: dict[Direction, tuple[int, int]] = {
             Direction.SOUTH: (1, 0),
@@ -52,13 +66,13 @@ class FloorConfiguration:
             Direction.EAST: Direction.WEST,
         }
 
-    def select_entrance_exit(self) -> tuple[int, int, int, int]:
+    def select_entrance_exit(self) -> tuple[tuple[int, int], tuple[int, int]]:
         entrance_row: int = 0
         entrance_col: int = 0
         exit_row: int = self.rows - 1
         exit_col: int = self.cols - 1  # temp placeholders
 
-        return entrance_row, entrance_col, exit_row, exit_col
+        return (entrance_row, entrance_col), (exit_row, exit_col)
 
     def check_direction(
         self, row: int, col: int, direction: Direction, room_dict: dict[tuple[int, int], Room]
@@ -101,7 +115,7 @@ class FloorConfiguration:
     # Maybe convert to BSP generation later (if you have more time than you bargained for)
     def generate_path(self) -> dict[tuple[int, int], Room]:
         room_dict: dict[tuple[int, int], Room] = {}
-        ent_row, ent_col, ex_row, ex_col = self.select_entrance_exit()
+        (ent_row, ent_col), (ex_row, ex_col) = self.entrance, self.exit
 
         entrance_room: Room = Room(
             surface=self.surface,
@@ -172,10 +186,20 @@ class FloorConfiguration:
 
 
 class Floor:
-    def __init__(self, surface: pygame.Surface, path: dict[tuple[int, int], Room], grid_constant: int) -> None:
+    def __init__(
+        self,
+        surface: pygame.Surface,
+        grid_constant: int,
+        path: dict[tuple[int, int], Room],
+        entrance: tuple[int, int],
+        exit: tuple[int, int],
+    ) -> None:
         self.surface: pygame.Surface = surface
-        self.path: dict[tuple[int, int], Room] = path
         self.grid_constant: int = grid_constant
+        self.path: dict[tuple[int, int], Room] = path
+
+        self.entrance: Room = self.path[entrance]
+        self.exit: Room = self.path[exit]
 
     def update(self, camera_offset: tuple[float, float]):
         for room in self.path.values():
@@ -220,35 +244,37 @@ class Room:
 
         self.width: int = self.grid_constant * fl.ROOM_UNIT_SIZE
         self.height: int = self.grid_constant * fl.ROOM_UNIT_SIZE
-        self.spacing: int = self.grid_constant
+        self.spacing: int = self.grid_constant * 2
         self.start_x: float = self.col * (self.spacing + self.width) + (self.surface.width - self.width) // 2
         self.start_y: float = self.row * (self.spacing + self.height) + (self.surface.height - self.height) // 2
 
         self.door_pos_dict: dict[Direction, tuple[int, int]] = {
-            Direction.SOUTH: (
-                self.start_x + ((self.width - self.grid_constant * 2) // 2),
-                self.start_y + self.height - self.grid_constant // 2,
-            ),
+            Direction.SOUTH: (self.start_x + ((self.width - self.grid_constant * 2) // 2), self.start_y + self.height),
             Direction.NORTH: (
                 self.start_x + ((self.width - self.grid_constant * 2) // 2),
-                self.start_y - (self.grid_constant // 2),
+                self.start_y - self.grid_constant,
             ),
             Direction.WEST: (
-                self.start_x - (self.grid_constant // 2),
+                self.start_x - self.grid_constant,
                 self.start_y + ((self.height - self.grid_constant * 2) // 2),
             ),
-            Direction.EAST: (
-                self.start_x + self.width - self.grid_constant // 2,
-                self.start_y + ((self.height - self.grid_constant * 2) // 2),
-            ),
+            Direction.EAST: (self.start_x + self.width, self.start_y + ((self.height - self.grid_constant * 2) // 2)),
         }
 
         self.tile_map: list[BaseTile] = self.set_floor()
+        self.wall_map: list[BaseTile] = []
         self.door_map: list[BaseTile] = []
+
+        self.tile_mesh: list[BaseTile] = self.tile_map + self.wall_map + self.door_map
+
+    def refresh_tile_mesh(self):
+        self.tile_mesh = self.tile_map + self.wall_map + self.door_map
 
     def add_door(self, door: Direction):
         self.doors.add(door)
         self.door_map = self.set_doors()
+        self.wall_map = self.set_walls()
+        self.refresh_tile_mesh()
 
     def get_loc(self) -> tuple[int, int]:
         return self.row, self.col
@@ -293,11 +319,76 @@ class Room:
 
         return doors
 
+    def get_door_bounds(self, door: BaseTile) -> pygame.Rect:
+        margin: int = self.grid_constant // 3
+        tl_pos: pygame.typing.Point = door.x_pos - margin, door.y_pos - margin
+        wh_pos: pygame.typing.Point = self.grid_constant + margin * 2, self.grid_constant + margin * 2
+
+        return pygame.Rect(tl_pos, wh_pos)
+
+    def in_door_bounds(self, door: BaseTile, x: float, y: float) -> bool:
+        bounding_rect: pygame.Rect = self.get_door_bounds(door=door)
+        if x > bounding_rect.left and x < bounding_rect.right and y > bounding_rect.top and y < bounding_rect.bottom:
+            return True
+
+        else:
+            return False
+
+    def set_walls(self) -> list[BaseTile]:
+        wall_tiles: list[BaseTile] = []
+        base_x: float = self.start_x
+        base_y: float = self.start_y - (self.grid_constant)
+
+        for i in range(fl.ROOM_UNIT_SIZE):
+            x: float = base_x + self.grid_constant * i
+            y: float = base_y
+            for door in self.door_map:
+                if self.in_door_bounds(door=door, x=x, y=y):
+                    break
+            else:
+                wall_tiles.append(self.tile_config.create_collide(x=int(x), y=int(y), color=cp.LIGHT_GREEN))
+
+            for door in self.door_map:
+                if self.in_door_bounds(door=door, x=x, y=y + self.height + self.grid_constant):
+                    break
+
+            else:
+                wall_tiles.append(
+                    self.tile_config.create_collide(
+                        x=int(x), y=int(y + self.height + self.grid_constant), color=cp.LIGHT_GREEN
+                    )
+                )
+
+        base_x: float = self.start_x - self.grid_constant
+        base_y: float = self.start_y
+        for j in range(fl.ROOM_UNIT_SIZE):
+            x: float = base_x
+            y: float = base_y + self.grid_constant * j
+            for door in self.door_map:
+                if self.in_door_bounds(door=door, x=x, y=y):
+                    break
+
+            else:
+                wall_tiles.append(self.tile_config.create_collide(x=int(x), y=int(y), color=cp.LIGHT_GREEN))
+
+            for door in self.door_map:
+                if self.in_door_bounds(door=door, x=x + self.width + self.grid_constant, y=y):
+                    break
+
+            else:
+                wall_tiles.append(
+                    self.tile_config.create_collide(
+                        x=int(x + self.width + self.grid_constant), y=int(y), color=cp.LIGHT_GREEN
+                    )
+                )
+
+        return wall_tiles
+
     def update(self, camera_offset: tuple[float, float]):
-        for tile in self.tile_map + self.door_map:
+        for tile in self.tile_mesh:
             tile.x_pos += camera_offset[0]
             tile.y_pos += camera_offset[1]
 
     def draw(self):
-        for tile in self.tile_map + self.door_map:
+        for tile in self.tile_mesh:
             tile.draw()

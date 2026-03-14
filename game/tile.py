@@ -14,6 +14,10 @@ class TileConfiguration:
         door: Door = Door(surface=self.surface, w=w, h=h, x=x, y=y, color=color)
         return door
 
+    def create_collide(self, x: int, y: int, color: pygame.typing.ColorLike) -> CollideTile:
+        collide_tile: CollideTile = CollideTile(surface=self.surface, size=self.size, x=x, y=y, color=color)
+        return collide_tile
+
 
 class BaseTile:
     def __init__(self, surface: pygame.Surface, x: int, y: int, color: pygame.typing.ColorLike) -> None:
@@ -36,17 +40,22 @@ class BaseTile:
 
     def draw(self):
         if self.on_screen:
-            pygame.draw.rect(self.surface, self.color, self.get_rect(), border_radius=2)
+            pygame.draw.rect(self.surface, self.color, self.get_rect())
 
 
 class Tile(BaseTile):
     def __init__(self, surface: pygame.Surface, size: int, x: int, y: int, color: pygame.typing.ColorLike) -> None:
         super().__init__(surface, x, y, color)
-        self.size: int = size
-        self.width, self.height = self.size, self.size
+        self.width, self.height = size, size
 
 
 class Door(BaseTile):
     def __init__(self, surface: pygame.Surface, w: int, h: int, x: int, y: int, color: pygame.typing.ColorLike) -> None:
         super().__init__(surface, x, y, color)
         self.width, self.height = w, h
+
+
+class CollideTile(BaseTile):
+    def __init__(self, surface: pygame.Surface, size: int, x: int, y: int, color: pygame.typing.ColorLike) -> None:
+        super().__init__(surface, x, y, color)
+        self.width, self.height = size, size
