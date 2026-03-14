@@ -71,8 +71,8 @@ class World:
             player_x=self.player.x_pos, player_y=self.player.y_pos, delta_time=delta_time
         )
         self.update_collisions(delta_time=delta_time)
-        self.player.update(camera_offset=self.camera_offset)
         self.floor_manager.update(camera_offset=self.camera_offset)
+        self.player.update(camera_offset=self.camera_offset)
 
     def draw(self):
         self.floor_manager.draw()

@@ -13,12 +13,13 @@ class Screen:
 
 
 class Camera:
-    EASING_MULTIPLIER: int = 2
+    EASING_MULTIPLIER: int = 4
+    TOLERANCE: float = 0.6
 
 
 class Player:
-    SPEED: int = Main.GRID_CONSTANT * 10
-    RADIUS: int = Main.GRID_CONSTANT // 2
+    SPEED: int = Main.GRID_CONSTANT * 5
+    RADIUS: int = 0  # Main.GRID_CONSTANT // 2
 
 
 class Floor:

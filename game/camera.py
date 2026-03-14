@@ -17,6 +17,11 @@ class Camera:
 
         self.x_offset = (self.initial_x - player_x) * easing_speed
         self.y_offset = (self.initial_y - player_y) * easing_speed
+        if abs(self.x_offset) < cm.TOLERANCE:
+            self.x_offset = 0
+
+        if abs(self.y_offset) < cm.TOLERANCE:
+            self.y_offset = 0
 
         offset: tuple[float, float] = self.x_offset, self.y_offset
 
