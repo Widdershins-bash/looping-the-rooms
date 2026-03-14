@@ -12,7 +12,7 @@ class Image:
     def gen_image(self, path: str, scalar: float | None = None) -> pygame.Surface:
         image: pygame.Surface = pygame.image.load(path)
         if scalar:
-            pygame.transform.scale_by(image, scalar)
+            image = pygame.transform.scale_by(image, scalar)
 
         return image
 
@@ -66,11 +66,13 @@ class TileThemeOne(Theme):
         self.theme_path = "tileset.png"
         self.sheet = self.gen_image(self.path + self.theme_path, scalar=im.TILE_SCALAR)
 
-        self.floor = self.sheet.subsurface(self.x_scalar, 88, self.x_scalar, self.y_scalar)
-        self.north_wall = self.sheet.subsurface(0, 88, self.x_scalar, self.y_scalar)
-        self.east_wall = self.sheet.subsurface(0, 88, self.x_scalar, self.y_scalar)
-        self.south_wall = self.sheet.subsurface(0, 88, self.x_scalar, self.y_scalar)
-        self.west_wall = self.sheet.subsurface(0, 88, self.x_scalar, self.y_scalar)
+        self.floor = self.sheet.subsurface(
+            self.x_scalar, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar
+        )
+        self.north_wall = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
+        self.east_wall = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
+        self.south_wall = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
+        self.west_wall = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
 
 
 class TileThemeTwo(Theme):

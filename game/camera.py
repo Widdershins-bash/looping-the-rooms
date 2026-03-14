@@ -3,26 +3,23 @@ from system.constants import Camera as cm
 
 
 class Camera:
-    def __init__(self, surface: pygame.Surface, player_x: float, player_y: float, grid_constant: int) -> None:
+    def __init__(self, surface: pygame.Surface, grid_constant: int) -> None:
         self.surface: pygame.Surface = surface
-        self.initial_x: float = player_x
-        self.initial_y: float = player_y
         self.grid_constant: int = grid_constant
 
-        self.x_offset: float = 0
-        self.y_offset: float = 0
+        self.x_focus: float
+        self.y_focus: float
 
-    def get_offset(self, player_x: float, player_y: float, delta_time: float) -> tuple[float, float]:
+    def get_offset(self, dx: float, dy: float, delta_time: float) -> tuple[float, float]:
         easing_speed: float = delta_time * cm.EASING_MULTIPLIER
 
-        self.x_offset = (self.initial_x - player_x) * easing_speed
-        self.y_offset = (self.initial_y - player_y) * easing_speed
-        if abs(self.x_offset) < cm.TOLERANCE:
-            self.x_offset = 0
+        x_offset: float = (self.x_focus - dx) * easing_speed
+        y_offset: float = (self.y_focus - dy) * easing_speed
 
-        if abs(self.y_offset) < cm.TOLERANCE:
-            self.y_offset = 0
+        if abs(x_offset) < cm.TOLERANCE:
+            x_offset = 0
 
-        offset: tuple[float, float] = self.x_offset, self.y_offset
+        if abs(y_offset) < cm.TOLERANCE:
+            y_offset = 0
 
-        return offset
+        return x_offset, y_offset

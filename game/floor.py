@@ -29,6 +29,7 @@ class FloorManager:
             exit=self.first_floor_config.exit,
         )
 
+        self.current_floor_index: int = 0
         self.floors: list[Floor] = [self.first_floor]
         self.floor_margin: int = self.grid_constant
 
@@ -222,8 +223,8 @@ class Floor:
 
     def update(self, camera_offset: tuple[float, float]):
         for room in self.path.values():
-            room.start_x += camera_offset[0]  # I am only doing this in case I need to access room positions later
-            room.start_y += camera_offset[1]
+            room.x_pos += camera_offset[0]  # I am only doing this in case I need to access room positions later
+            room.y_pos += camera_offset[1]
             room.update(camera_offset=camera_offset)
 
     def draw(self):
@@ -271,20 +272,22 @@ class Room:
         self.width: int = self.grid_constant * fl.ROOM_UNIT_SIZE
         self.height: int = self.grid_constant * fl.ROOM_UNIT_SIZE
         self.spacing: int = self.grid_constant * 2
-        self.start_x: float = self.col * (self.spacing + self.width) + (self.surface.width - self.width) // 2
-        self.start_y: float = self.row * (self.spacing + self.height) + (self.surface.height - self.height) // 2
+        self.x_pos: float = self.col * (self.spacing + self.width) + (self.surface.width - self.width) // 2
+        self.y_pos: float = self.row * (self.spacing + self.height) + (self.surface.height - self.height) // 2
+        self.x_focus: float = (self.surface.width - self.width) // 2
+        self.y_focus: float = (self.surface.height - self.height) // 2
 
         self.door_pos_dict: dict[Direction, tuple[int, int]] = {
-            Direction.SOUTH: (self.start_x + ((self.width - self.grid_constant * 2) // 2), self.start_y + self.height),
+            Direction.SOUTH: (self.x_pos + ((self.width - self.grid_constant * 2) // 2), self.y_pos + self.height),
             Direction.NORTH: (
-                self.start_x + ((self.width - self.grid_constant * 2) // 2),
-                self.start_y - self.grid_constant,
+                self.x_pos + ((self.width - self.grid_constant * 2) // 2),
+                self.y_pos - self.grid_constant,
             ),
             Direction.WEST: (
-                self.start_x - self.grid_constant,
-                self.start_y + ((self.height - self.grid_constant * 2) // 2),
+                self.x_pos - self.grid_constant,
+                self.y_pos + ((self.height - self.grid_constant * 2) // 2),
             ),
-            Direction.EAST: (self.start_x + self.width, self.start_y + ((self.height - self.grid_constant * 2) // 2)),
+            Direction.EAST: (self.x_pos + self.width, self.y_pos + ((self.height - self.grid_constant * 2) // 2)),
         }
 
         self.tile_map: list[BaseTile] = self.set_floor()
@@ -302,6 +305,14 @@ class Room:
         self.wall_map = self.set_walls()
         self.refresh_tile_mesh()
 
+    def get_rect(self) -> pygame.Rect:
+        return pygame.Rect(
+            self.x_pos - self.grid_constant,
+            self.y_pos - self.grid_constant,
+            self.width + self.grid_constant * 2,
+            self.height + self.grid_constant * 2,
+        )
+
     def get_loc(self) -> tuple[int, int]:
         return self.row, self.col
 
@@ -309,8 +320,8 @@ class Room:
         tiles: list[BaseTile] = []
         for row in range(fl.ROOM_UNIT_SIZE):
             for col in range(fl.ROOM_UNIT_SIZE):
-                x: float = col * self.grid_constant + self.start_x
-                y: float = row * self.grid_constant + self.start_y
+                x: float = col * self.grid_constant + self.x_pos
+                y: float = row * self.grid_constant + self.y_pos
                 tiles.append(self.tile_config.create_tile(x=int(x), y=int(y), image=self.theme.floor))
 
         return tiles
@@ -362,8 +373,8 @@ class Room:
 
     def set_walls(self) -> list[BaseTile]:
         wall_tiles: list[BaseTile] = []
-        base_x: float = self.start_x
-        base_y: float = self.start_y - (self.grid_constant)
+        base_x: float = self.x_pos
+        base_y: float = self.y_pos - (self.grid_constant)
 
         for i in range(fl.ROOM_UNIT_SIZE):
             x: float = base_x + self.grid_constant * i
@@ -385,8 +396,8 @@ class Room:
                     )
                 )
 
-        base_x: float = self.start_x - self.grid_constant
-        base_y: float = self.start_y
+        base_x: float = self.x_pos - self.grid_constant
+        base_y: float = self.y_pos
         for j in range(fl.ROOM_UNIT_SIZE):
             x: float = base_x
             y: float = base_y + self.grid_constant * j
