@@ -1,5 +1,5 @@
 import pygame
-from game.floor import FloorManager, Room
+from game.floor import FloorManager
 from game.camera import Camera
 from game.player import Player
 from game.tile import BaseTile

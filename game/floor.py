@@ -11,19 +11,18 @@ class FloorManager:
         self.surface: pygame.Surface = surface
         self.grid_constant: int = grid_constant
 
-        self.floor_config: FloorConfiguration = FloorConfiguration(
-            surface=self.surface, grid_constant=self.grid_constant
+        self.first_floor_config: FloorConfiguration = FloorConfiguration(
+            surface=self.surface, grid_constant=self.grid_constant, rows=5, columns=5
         )
-
         self.first_floor: Floor = Floor(
             surface=self.surface,
             grid_constant=self.grid_constant,
-            path=self.floor_config.generate_path(),
-            entrance=self.floor_config.entrance,
-            exit=self.floor_config.exit,
+            path=self.first_floor_config.generate_path(),
+            entrance=self.first_floor_config.entrance,
+            exit=self.first_floor_config.exit,
         )
-        self.floors: list[Floor] = [self.first_floor]
 
+        self.floors: list[Floor] = [self.first_floor]
         self.floor_margin: int = self.grid_constant
 
     def update(self, camera_offset: tuple[float, float]):
@@ -47,10 +46,8 @@ class FloorConfiguration:
         self.rows: int = rows
         self.cols: int = columns
 
-        self.entrance: tuple[int, int]
-        self.exit: tuple[int, int]
-
-        self.entrance, self.exit = self.select_entrance_exit()
+        self.entrance: tuple[int, int] = self.get_random_entrance()
+        self.exit: tuple[int, int] = self.get_random_exit()
 
         self.movement_dict: dict[Direction, tuple[int, int]] = {
             Direction.SOUTH: (1, 0),
@@ -66,13 +63,17 @@ class FloorConfiguration:
             Direction.EAST: Direction.WEST,
         }
 
-    def select_entrance_exit(self) -> tuple[tuple[int, int], tuple[int, int]]:
+    def get_random_entrance(self) -> tuple[int, int]:
         entrance_row: int = 0
         entrance_col: int = 0
+
+        return entrance_row, entrance_col
+
+    def get_random_exit(self) -> tuple[int, int]:
         exit_row: int = self.rows - 1
         exit_col: int = self.cols - 1  # temp placeholders
 
-        return (entrance_row, entrance_col), (exit_row, exit_col)
+        return exit_row, exit_col
 
     def check_direction(
         self, row: int, col: int, direction: Direction, room_dict: dict[tuple[int, int], Room]

@@ -12,13 +12,22 @@ class Screen:
     FPS: int = 120
 
 
+class Menu:
+    MENU_MARGIN: int = 6
+
+
+class Button:
+    SCALED_SLIDER_LENGTH: int = 38
+    SCALED_SLIDER_START_X: int = 28
+
+
 class Camera:
     EASING_MULTIPLIER: int = 4
-    TOLERANCE: float = 0.6
+    TOLERANCE: float = 0.4
 
 
 class Player:
-    SPEED: int = Main.GRID_CONSTANT * 5
+    SPEED: int = Main.GRID_CONSTANT * 15
     RADIUS: int = 0  # Main.GRID_CONSTANT // 2
 
 
