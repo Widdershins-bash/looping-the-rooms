@@ -1,6 +1,7 @@
 import pygame
 import random
 from enum import Enum, auto
+from system.image import ThemeManager, Theme
 from system.constants import Main, Floor as fl, ColorPalette as cp, Font
 from game.tile import TileConfiguration, BaseTile
 import math
@@ -11,8 +12,14 @@ class FloorManager:
         self.surface: pygame.Surface = surface
         self.grid_constant: int = grid_constant
 
+        self.theme_manager: ThemeManager = ThemeManager()
+
         self.first_floor_config: FloorConfiguration = FloorConfiguration(
-            surface=self.surface, grid_constant=self.grid_constant, rows=fl.FLOOR_ROOM_SIZE, columns=fl.FLOOR_ROOM_SIZE
+            surface=self.surface,
+            grid_constant=self.grid_constant,
+            theme_list=self.theme_manager.theme_list,
+            rows=fl.FLOOR_ROOM_SIZE,
+            columns=fl.FLOOR_ROOM_SIZE,
         )
         self.first_floor: Floor = Floor(
             surface=self.surface,
@@ -40,11 +47,16 @@ class FloorManager:
 
 
 class FloorConfiguration:
-    def __init__(self, surface: pygame.Surface, grid_constant: int, rows: int = 4, columns: int = 4) -> None:
+    def __init__(
+        self, surface: pygame.Surface, grid_constant: int, theme_list: list[Theme], rows: int = 4, columns: int = 4
+    ) -> None:
         self.surface: pygame.Surface = surface
         self.grid_constant: int = grid_constant
+        self.theme_list: list[Theme] = theme_list
         self.rows: int = rows
         self.cols: int = columns
+
+        self.theme: Theme = random.choice(self.theme_list)
 
         self.entrance: tuple[int, int] = self.get_random_entrance()
         self.exit: tuple[int, int] = self.get_random_exit()
@@ -123,10 +135,16 @@ class FloorConfiguration:
             grid_constant=self.grid_constant,
             row=ent_row,
             col=ent_col,
+            theme=self.theme,
             room_type=RoomType.ENTRANCE,
         )
         exit_room: Room = Room(
-            surface=self.surface, grid_constant=self.grid_constant, row=ex_row, col=ex_col, room_type=RoomType.EXIT
+            surface=self.surface,
+            grid_constant=self.grid_constant,
+            row=ex_row,
+            col=ex_col,
+            theme=self.theme,
+            room_type=RoomType.EXIT,
         )
 
         room_dict[entrance_room.get_loc()] = entrance_room
@@ -166,6 +184,7 @@ class FloorConfiguration:
                     grid_constant=self.grid_constant,
                     row=next_row,
                     col=next_col,
+                    theme=self.theme,
                     room_type=RoomType.NORMAL,
                 )
                 new_room.add_door(door=self.door_connections_dict[next_dir])
@@ -198,7 +217,6 @@ class Floor:
         self.surface: pygame.Surface = surface
         self.grid_constant: int = grid_constant
         self.path: dict[tuple[int, int], Room] = path
-
         self.entrance: Room = self.path[entrance]
         self.exit: Room = self.path[exit]
 
@@ -230,12 +248,19 @@ class Direction(Enum):
 
 class Room:
     def __init__(
-        self, surface: pygame.Surface, grid_constant: int, row: int, col: int, room_type: RoomType = RoomType.NORMAL
+        self,
+        surface: pygame.Surface,
+        grid_constant: int,
+        row: int,
+        col: int,
+        theme: Theme,
+        room_type: RoomType = RoomType.NORMAL,
     ) -> None:
         self.surface: pygame.Surface = surface
         self.grid_constant: int = grid_constant
         self.row: int = row
         self.col: int = col
+        self.theme: Theme = theme
         self.room_type: RoomType = room_type
 
         self.tile_config: TileConfiguration = TileConfiguration(surface=self.surface, grid_constant=self.grid_constant)
@@ -286,7 +311,7 @@ class Room:
             for col in range(fl.ROOM_UNIT_SIZE):
                 x: float = col * self.grid_constant + self.start_x
                 y: float = row * self.grid_constant + self.start_y
-                tiles.append(self.tile_config.create_tile(x=int(x), y=int(y), color=cp.DARK_GREEN))
+                tiles.append(self.tile_config.create_tile(x=int(x), y=int(y), image=self.theme.floor))
 
         return tiles
 
@@ -347,7 +372,7 @@ class Room:
                 if self.in_door_bounds(door=door, x=x, y=y):
                     break
             else:
-                wall_tiles.append(self.tile_config.create_collide(x=int(x), y=int(y), color=cp.LIGHT_GREEN))
+                wall_tiles.append(self.tile_config.create_collide(x=int(x), y=int(y), image=self.theme.north_wall))
 
             for door in self.door_map:
                 if self.in_door_bounds(door=door, x=x, y=y + self.height + self.grid_constant):
@@ -356,7 +381,7 @@ class Room:
             else:
                 wall_tiles.append(
                     self.tile_config.create_collide(
-                        x=int(x), y=int(y + self.height + self.grid_constant), color=cp.LIGHT_GREEN
+                        x=int(x), y=int(y + self.height + self.grid_constant), image=self.theme.south_wall
                     )
                 )
 
@@ -370,7 +395,7 @@ class Room:
                     break
 
             else:
-                wall_tiles.append(self.tile_config.create_collide(x=int(x), y=int(y), color=cp.LIGHT_GREEN))
+                wall_tiles.append(self.tile_config.create_collide(x=int(x), y=int(y), image=self.theme.west_wall))
 
             for door in self.door_map:
                 if self.in_door_bounds(door=door, x=x + self.width + self.grid_constant, y=y):
@@ -379,7 +404,7 @@ class Room:
             else:
                 wall_tiles.append(
                     self.tile_config.create_collide(
-                        x=int(x + self.width + self.grid_constant), y=int(y), color=cp.LIGHT_GREEN
+                        x=int(x + self.width + self.grid_constant), y=int(y), image=self.theme.east_wall
                     )
                 )
 

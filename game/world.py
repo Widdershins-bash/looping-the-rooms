@@ -66,13 +66,13 @@ class World:
         if self.player_found_exit():
             self.floor_manager.display_room_found()
 
-    def update(self, delta_time: float) -> None:
+    def update(self, delta_time: float, viewport: pygame.Rect, scale: int) -> None:
         self.camera_offset = self.camera.get_offset(
             player_x=self.player.x_pos, player_y=self.player.y_pos, delta_time=delta_time
         )
         self.update_collisions(delta_time=delta_time)
         self.floor_manager.update(camera_offset=self.camera_offset)
-        self.player.update(camera_offset=self.camera_offset)
+        self.player.update(camera_offset=self.camera_offset, viewport=viewport, scale=scale)
 
     def draw(self):
         self.floor_manager.draw()

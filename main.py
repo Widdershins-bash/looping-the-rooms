@@ -45,7 +45,7 @@ if __name__ == "__main__":
         menu.draw()
 
         if game_state == gs.PLAY:
-            world.update(delta_time=delta_time)
+            world.update(delta_time=delta_time, viewport=screen.viewport, scale=screen.scalar)
         world.draw()
 
         screen.scale_flip()

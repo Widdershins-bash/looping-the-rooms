@@ -4,7 +4,7 @@ from enum import Enum, auto
 
 class Main:
     BASE_CONSTANT: int = 32  # never used in the game, rather, just used for setting the grid standard
-    GRID_CONSTANT: int = BASE_CONSTANT // 4  # tile size in px
+    GRID_CONSTANT: int = BASE_CONSTANT // 1  # tile size in px
     BUTTON_CONSTANT: int = BASE_CONSTANT
 
 
@@ -29,7 +29,7 @@ class Camera:
 
 
 class Player:
-    SPEED: int = Main.GRID_CONSTANT * 20
+    SPEED: int = Main.GRID_CONSTANT * 8
     RADIUS: int = 0  # Main.GRID_CONSTANT // 2
 
 
