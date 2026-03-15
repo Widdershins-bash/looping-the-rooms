@@ -33,7 +33,7 @@ if __name__ == "__main__":
         delta_time: float = get_delta_time(clock=screen.clock, fps=screen.fps)
         if menu.game_state != game_state:
             if game_state == gs.MAIN_MENU and menu.game_state == gs.PLAY:
-                world.__init__(surface=world.surface, grid_constant=world.grid_constant, init_state=gs.PLAY)
+                world.start_world(init_state=gs.PLAY)
 
             game_state = menu.game_state
             world.game_state = menu.game_state

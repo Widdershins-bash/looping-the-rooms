@@ -36,7 +36,6 @@ class Player:
 
 class Floor:
     ROOM_UNIT_SIZE: int = 10
-    FLOOR_ROOM_SIZE: int = 4
 
 
 class Image:
@@ -73,3 +72,4 @@ class GameState(Enum):
 class Font:
     BASE: pygame.Font = pygame.Font("freesansbold.ttf")
     ACCENTUATED: pygame.Font = pygame.Font("freesansbold.ttf", 40)
+    STATS: pygame.Font = pygame.Font("freesansbold.ttf", 15)

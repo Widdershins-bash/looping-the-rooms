@@ -14,17 +14,20 @@ class FloorManager:
 
         self.theme_manager: ThemeManager = ThemeManager()
 
+        self.floor_size: list[int] = [3, 3]
         self.floor: Floor = self.spawn_floor()
 
         self.floor_margin: int = self.grid_constant
 
     def spawn_floor(self) -> Floor:
+        self.floor_size[random.randint(0, 1)] += 1
+
         floor_config: FloorConfiguration = FloorConfiguration(
             surface=self.surface,
             grid_constant=self.grid_constant,
             theme_list=self.theme_manager.theme_list,
-            rows=fl.FLOOR_ROOM_SIZE,
-            columns=fl.FLOOR_ROOM_SIZE,
+            rows=self.floor_size[0],
+            columns=self.floor_size[1],
         )
         floor: Floor = Floor(
             surface=self.surface,

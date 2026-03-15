@@ -1,5 +1,6 @@
 import pygame
 from system.constants import Floor as fl, GameState as gs
+from system.stats import Stats
 from game.floor import FloorManager, Room
 from game.camera import Camera
 from game.player import Player
@@ -15,12 +16,17 @@ class World:
 
         self.floor_manager: FloorManager = FloorManager(surface=self.surface, grid_constant=self.grid_constant)
         self.player: Player = Player(surface=self.surface, size=self.grid_constant)
-
         self.camera_offset: tuple[float, float] = (0, 0)
         self.camera: Camera = Camera(surface=self.surface, grid_constant=self.grid_constant)
+        self.stat_tracker: Stats = Stats(
+            surface=self.surface, init_floor_size=(self.floor_manager.floor_size[0], self.floor_manager.floor_size[1])
+        )
 
         self.event_ping: bool = True
         self.finish_timer_event: int = pygame.event.custom_type()
+
+    def start_world(self, init_state: gs):
+        self.__init__(surface=self.surface, grid_constant=self.grid_constant, init_state=init_state)
 
     def get_wall_tiles(self) -> list[BaseTile]:
         walls: list[BaseTile] = []
@@ -79,9 +85,14 @@ class World:
 
         self.camera_offset = self.camera.get_offset(dx=room.x_pos, dy=room.y_pos, delta_time=delta_time)
 
+    def update_stats(self):
+        self.stat_tracker.score += 1
+        self.stat_tracker.floor_size = (self.floor_manager.floor_size[0], self.floor_manager.floor_size[1])
+
     def update(self, delta_time: float, viewport: pygame.Rect, scale: int) -> None:
         if self.game_state == gs.NEXT:
             self.floor_manager.floor = self.floor_manager.spawn_floor()
+            self.update_stats()
             self.game_state = gs.PLAY
 
         if self.game_state == gs.PLAY:
@@ -89,6 +100,7 @@ class World:
             self.update_collisions(delta_time=delta_time)
             self.floor_manager.update(camera_offset=self.camera_offset)
             self.player.update(camera_offset=self.camera_offset, viewport=viewport, scale=scale)
+            self.stat_tracker.update()
 
     def draw(self):
         self.floor_manager.draw()
@@ -96,3 +108,4 @@ class World:
 
         if self.game_state == gs.PLAY:
             self.draw_alerts()
+            self.stat_tracker.display_stat_box()
