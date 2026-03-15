@@ -19,7 +19,7 @@ game_state: gs = gs.MAIN_MENU
 
 screen: Screen = Screen()
 sfx: SFX = SFX()
-world: World = World(surface=screen.logical, grid_constant=Main.GRID_CONSTANT)
+world: World = World(surface=screen.logical, grid_constant=Main.GRID_CONSTANT, init_state=game_state)
 menu: MenuManager = MenuManager(surface=screen.alpha, init_state=game_state, sfx=sfx)
 
 if __name__ == "__main__":
@@ -33,19 +33,24 @@ if __name__ == "__main__":
         delta_time: float = get_delta_time(clock=screen.clock, fps=screen.fps)
         if menu.game_state != game_state:
             if game_state == gs.MAIN_MENU and menu.game_state == gs.PLAY:
-                world.__init__(surface=world.surface, grid_constant=world.grid_constant)
+                world.__init__(surface=world.surface, grid_constant=world.grid_constant, init_state=gs.PLAY)
 
             game_state = menu.game_state
+            world.game_state = menu.game_state
+
+        if world.game_state != game_state:
+            game_state = world.game_state
+            menu.game_state = world.game_state
 
         for event in pygame.event.get():
             if screen.running:
                 screen.handle_events(event=event, game_state=game_state)
+                world.handle_events(event=event)
 
         menu.update(viewport=screen.viewport, scale=screen.scalar)
         menu.draw()
 
-        if game_state == gs.PLAY:
-            world.update(delta_time=delta_time, viewport=screen.viewport, scale=screen.scalar)
+        world.update(delta_time=delta_time, viewport=screen.viewport, scale=screen.scalar)
         world.draw()
 
         screen.scale_flip()

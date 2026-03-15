@@ -14,28 +14,30 @@ class FloorManager:
 
         self.theme_manager: ThemeManager = ThemeManager()
 
-        self.first_floor_config: FloorConfiguration = FloorConfiguration(
+        self.floor: Floor = self.spawn_floor()
+
+        self.floor_margin: int = self.grid_constant
+
+    def spawn_floor(self) -> Floor:
+        floor_config: FloorConfiguration = FloorConfiguration(
             surface=self.surface,
             grid_constant=self.grid_constant,
             theme_list=self.theme_manager.theme_list,
             rows=fl.FLOOR_ROOM_SIZE,
             columns=fl.FLOOR_ROOM_SIZE,
         )
-        self.first_floor: Floor = Floor(
+        floor: Floor = Floor(
             surface=self.surface,
             grid_constant=self.grid_constant,
-            path=self.first_floor_config.generate_path(),
-            entrance=self.first_floor_config.entrance,
-            exit=self.first_floor_config.exit,
+            path=floor_config.generate_path(),
+            entrance=floor_config.entrance,
+            exit=floor_config.exit,
         )
 
-        self.current_floor_index: int = 0
-        self.floors: list[Floor] = [self.first_floor]
-        self.floor_margin: int = self.grid_constant
+        return floor
 
     def update(self, camera_offset: tuple[float, float]):
-        for floor in self.floors:
-            floor.update(camera_offset=camera_offset)
+        self.floor.update(camera_offset=camera_offset)
 
     def display_room_found(self):
         message: str = "You Found The Exit!"
@@ -43,8 +45,7 @@ class FloorManager:
         self.surface.blit(display, ((self.surface.width - display.width) // 2, self.grid_constant * 4))
 
     def draw(self):
-        for floor in self.floors:
-            floor.draw()
+        self.floor.draw()
 
 
 class FloorConfiguration:

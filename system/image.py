@@ -29,6 +29,7 @@ class ButtonSprite(Image):
         self.quit: pygame.Surface = self.sheet.subsurface(0, 0, self.x_scalar, self.y_scalar)
         self.resume: pygame.Surface = self.sheet.subsurface(0, 0, self.x_scalar, self.y_scalar)
         self.settings: pygame.Surface = self.sheet.subsurface(0, 0, self.y_scalar, self.y_scalar)
+        self.next_level: pygame.Surface = self.sheet.subsurface(0, 0, self.y_scalar, self.y_scalar)
         self.menu: pygame.Surface = self.sheet.subsurface(0, 0, self.x_scalar, self.y_scalar)
         self.volume: pygame.Surface = self.sheet.subsurface(0, 0, self.x_scalar, self.y_scalar)
         self.knob: pygame.Surface = self.sheet.subsurface(0, 0, 18, 18)

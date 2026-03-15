@@ -65,6 +65,8 @@ class GameState(Enum):
     PLAY = auto()
     QUIT = auto()
     SETTINGS = auto()
+    NEXT = auto()
+    LEVEL_SELECT = auto()
     PAUSE = auto()
 
 
