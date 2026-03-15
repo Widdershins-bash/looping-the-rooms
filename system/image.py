@@ -60,6 +60,19 @@ class Theme(Image):
         self.south_wall: pygame.Surface
         self.west_wall: pygame.Surface
 
+        self.tl_corner: pygame.Surface
+        self.tr_corner: pygame.Surface
+        self.bl_corner: pygame.Surface
+        self.br_corner: pygame.Surface
+
+        # still have to figure out code
+        self.item: pygame.Surface
+
+        self.north_door: pygame.Surface
+        self.south_door: pygame.Surface
+        self.west_door: pygame.Surface
+        self.east_door: pygame.Surface
+
 
 class TileThemeOne(Theme):
     def __init__(self) -> None:
@@ -75,6 +88,24 @@ class TileThemeOne(Theme):
         self.east_wall = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
         self.south_wall = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
         self.west_wall = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
+
+        self.tl_corner = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
+        self.tr_corner = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
+        self.bl_corner = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
+        self.br_corner = self.sheet.subsurface(0, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar)
+
+        self.north_door = self.sheet.subsurface(
+            self.x_scalar, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar
+        )
+        self.south_door = self.sheet.subsurface(
+            self.x_scalar, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar
+        )
+        self.west_door = self.sheet.subsurface(
+            self.x_scalar, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar
+        )
+        self.east_door = self.sheet.subsurface(
+            self.x_scalar, self.sheet.height - self.y_scalar * 2, self.x_scalar, self.y_scalar
+        )
 
 
 class TileThemeTwo(Theme):

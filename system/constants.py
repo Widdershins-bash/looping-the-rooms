@@ -30,7 +30,7 @@ class Camera:
 
 
 class Player:
-    SPEED: int = Main.GRID_CONSTANT * 8
+    # SPEED: int = Main.GRID_CONSTANT * 8 ---- switched to the player.py file to make it dynamic
     RADIUS: int = 0  # Main.GRID_CONSTANT // 2
 
 

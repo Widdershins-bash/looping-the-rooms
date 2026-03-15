@@ -225,6 +225,19 @@ class Floor:
         self.entrance: Room = self.path[entrance]
         self.exit: Room = self.path[exit]
 
+        self.upgrade_room: Room = random.choice(list(self.path.values()))
+        self.upgrade: BaseTile = self.set_speed_upgrade()
+        self.upgrade_room.tile_mesh.append(self.upgrade)
+        self.is_upgrade: bool = True
+
+    def set_speed_upgrade(self) -> BaseTile:
+        item: BaseTile = self.upgrade_room.tile_config.create_item(
+            x=int(self.upgrade_room.center[0]),
+            y=int(self.upgrade_room.center[1]),
+            color=cp.YELLOW,
+        )
+        return item
+
     def update(self, camera_offset: tuple[float, float]):
         for room in self.path.values():
             room.x_pos += camera_offset[0]  # I am only doing this in case I need to access room positions later
@@ -281,6 +294,8 @@ class Room:
         self.x_focus: float = (self.surface.width - self.width) // 2
         self.y_focus: float = (self.surface.height - self.height) // 2
 
+        self.center: tuple[float, float] = self.x_pos + self.width // 2, self.y_pos + self.height // 2
+
         self.door_pos_dict: dict[Direction, tuple[int, int]] = {
             Direction.SOUTH: (self.x_pos + ((self.width - self.grid_constant * 2) // 2), self.y_pos + self.height),
             Direction.NORTH: (
@@ -336,25 +351,47 @@ class Room:
             pos: tuple[int, int] = self.door_pos_dict[door]
             converted_x: float = pos[0]
             converted_y: float = pos[1]
-            if door == Direction.EAST or door == Direction.WEST:
+            if door == Direction.EAST:
                 doors.append(
                     self.tile_config.create_door(
                         w=self.grid_constant,
                         h=self.grid_constant * 2,
                         x=int(converted_x),
                         y=int(converted_y),
-                        color=cp.GRAY,
+                        image=self.theme.east_door,
                     )
                 )
 
-            else:
+            elif door == Direction.WEST:
+                doors.append(
+                    self.tile_config.create_door(
+                        w=self.grid_constant,
+                        h=self.grid_constant * 2,
+                        x=int(converted_x),
+                        y=int(converted_y),
+                        image=self.theme.west_door,
+                    )
+                )
+
+            elif door == Direction.NORTH:
                 doors.append(
                     self.tile_config.create_door(
                         w=self.grid_constant * 2,
                         h=self.grid_constant,
                         x=int(converted_x),
                         y=int(converted_y),
-                        color=cp.GRAY,
+                        image=self.theme.north_door,
+                    )
+                )
+
+            elif door == Direction.SOUTH:
+                doors.append(
+                    self.tile_config.create_door(
+                        w=self.grid_constant * 2,
+                        h=self.grid_constant,
+                        x=int(converted_x),
+                        y=int(converted_y),
+                        image=self.theme.south_door,
                     )
                 )
 
@@ -377,6 +414,27 @@ class Room:
 
     def set_walls(self) -> list[BaseTile]:
         wall_tiles: list[BaseTile] = []
+
+        # add corners
+        base_x: float = self.x_pos - self.grid_constant
+        base_y: float = self.y_pos - self.grid_constant
+        tl_corner: BaseTile = self.tile_config.create_collide(x=int(base_x), y=int(base_y), image=self.theme.tl_corner)
+        tr_corner: BaseTile = self.tile_config.create_collide(
+            x=int(base_x + self.width + self.grid_constant), y=int(base_y), image=self.theme.tr_corner
+        )
+        bl_corner: BaseTile = self.tile_config.create_collide(
+            x=int(base_x), y=int(base_y + self.height + self.grid_constant), image=self.theme.bl_corner
+        )
+        br_corner: BaseTile = self.tile_config.create_collide(
+            x=int(base_x + self.width + self.grid_constant),
+            y=int(base_y + self.height + self.grid_constant),
+            image=self.theme.br_corner,
+        )
+        wall_tiles.append(tl_corner)
+        wall_tiles.append(tr_corner)
+        wall_tiles.append(bl_corner)
+        wall_tiles.append(br_corner)
+
         base_x: float = self.x_pos
         base_y: float = self.y_pos - (self.grid_constant)
 

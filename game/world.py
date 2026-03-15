@@ -1,6 +1,7 @@
 import pygame
 from system.constants import Floor as fl, GameState as gs
 from system.stats import Stats
+from system.audio import SFX
 from game.floor import FloorManager, Room
 from game.camera import Camera
 from game.player import Player
@@ -9,10 +10,11 @@ from game.tile import BaseTile
 
 class World:
 
-    def __init__(self, surface: pygame.Surface, grid_constant: int, init_state: gs) -> None:
+    def __init__(self, surface: pygame.Surface, grid_constant: int, init_state: gs, sfx: SFX) -> None:
         self.surface: pygame.Surface = surface
         self.grid_constant: int = grid_constant
         self.game_state: gs = init_state
+        self.sfx: SFX = sfx
 
         self.floor_manager: FloorManager = FloorManager(surface=self.surface, grid_constant=self.grid_constant)
         self.player: Player = Player(surface=self.surface, size=self.grid_constant)
@@ -70,9 +72,21 @@ class World:
             if self.player.get_rect().colliderect(wall_tile.get_rect()):
                 self.player.y_pos -= dy
 
+    def check_grab_upgrade(self):
+        if (
+            self.player.get_rect().colliderect(self.floor_manager.floor.upgrade.get_rect())
+            and self.floor_manager.floor.is_upgrade
+        ):
+            self.floor_manager.floor.upgrade_room.tile_mesh.remove(self.floor_manager.floor.upgrade)
+            self.stat_tracker.speed += 20
+            self.player.speed = self.player.initial_speed * (100 + self.stat_tracker.speed) / 100
+            self.sfx.upgrade_sfx.play()
+            self.floor_manager.floor.is_upgrade = False
+
     def update_collisions(self, delta_time: float) -> None:
         dx, dy = self.player.get_movement(delta_time=delta_time)
         self.move_player_and_collide(dx=dx, dy=dy)
+        self.check_grab_upgrade()
 
     def draw_alerts(self) -> None:
         if self.player_found_exit():
@@ -116,7 +130,7 @@ class World:
             self.game_state = gs.LOSE
             self.stat_tracker.timer = (
                 self.stat_tracker.initial_time
-            )  # temporary reset so that it dosnt loop the loosing state
+            )  # temporary reset so that it doesn't loop the loosing state
 
     def update(self, delta_time: float, viewport: pygame.Rect, scale: int) -> None:
         if self.game_state == gs.NEXT:

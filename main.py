@@ -19,7 +19,7 @@ game_state: gs = gs.MAIN_MENU
 
 screen: Screen = Screen()
 sfx: SFX = SFX()
-world: World = World(surface=screen.logical, grid_constant=Main.GRID_CONSTANT, init_state=game_state)
+world: World = World(surface=screen.logical, grid_constant=Main.GRID_CONSTANT, init_state=game_state, sfx=sfx)
 menu: MenuManager = MenuManager(surface=screen.alpha, init_state=game_state, sfx=sfx)
 
 if __name__ == "__main__":

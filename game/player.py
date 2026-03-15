@@ -12,6 +12,8 @@ class Player:
         self.x_pos: float = self.surface.width // 2 + self.rect_margin
         self.y_pos: float = self.surface.height // 2 + self.rect_margin
 
+        self.initial_speed: int = self.size * 7
+        self.speed: float = self.initial_speed
         self.mouse_pos: tuple[int, int] = (0, 0)
 
     def scale_mouse(self, viewport: pygame.Rect, scale: int) -> tuple[int, int]:
@@ -28,16 +30,16 @@ class Player:
         keys: pygame.typing.SequenceLike = pygame.key.get_pressed()
 
         if keys[pygame.K_UP]:
-            dy -= p.SPEED * delta_time
+            dy -= self.speed * delta_time
 
         if keys[pygame.K_DOWN]:
-            dy += p.SPEED * delta_time
+            dy += self.speed * delta_time
 
         if keys[pygame.K_RIGHT]:
-            dx += p.SPEED * delta_time
+            dx += self.speed * delta_time
 
         if keys[pygame.K_LEFT]:
-            dx -= p.SPEED * delta_time
+            dx -= self.speed * delta_time
 
         # strictly for debugging
         if pygame.mouse.get_just_pressed()[0]:
