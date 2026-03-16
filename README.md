@@ -4,6 +4,10 @@ Looping The Rooms is a dungeon-crawling Pygame project built around room-to-room
 
 This project works as both a playable game jam release and a strong portfolio piece. It shows practical work in game-loop structure, procedural room generation, camera handling, menu/UI systems, collision logic, asset-driven rendering, browser deployment with `pygbag`, and cross-platform debugging between desktop and web builds. 🎮
 
+## 🔗 Play On Itch
+
+`[https://widdershins-bash.itch.io/looping-the-rooms]`
+
 ## ✨ Highlights
 
 - Procedurally generated room layouts with entrance and exit placement
@@ -40,9 +44,6 @@ This project works as both a playable game jam release and a strong portfolio pi
 - Adapting a desktop Pygame project for browser deployment with `pygbag`
 - Tracking down web-only runtime issues such as input scaling, timer behavior, and annotation evaluation
 
-## 🔗 Play On Itch
-
-`https://widdershins-bash.itch.io/looping-the-rooms`
 
 ## 🧪 Development Notes
 
