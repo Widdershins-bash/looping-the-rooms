@@ -41,13 +41,14 @@ class PlayerSprite(Image):
         self.x_scalar: int = 23
         self.sheet: pygame.Surface = self.gen_image(self.path + "playerWalkAnimation.png")
 
-        self.idle_down: pygame.Surface = self.gen_image(self.path + "idle.png")
+        self.idle_down: pygame.Surface = pygame.transform.scale_by(self.gen_image(self.path + "idle.png"), 1.5)
         self.idle_right: pygame.Surface = pygame.transform.rotate(self.idle_down, 90)
         self.idle_up: pygame.Surface = pygame.transform.rotate(self.idle_down, 180)
         self.idle_left: pygame.Surface = pygame.transform.rotate(self.idle_down, 270)
 
         self.walk_down: list[pygame.Surface] = [
-            self.sheet.subsurface(self.x_scalar * i, 0, self.x_scalar, self.y_scalar) for i in range(7)
+            pygame.transform.scale_by(self.sheet.subsurface(self.x_scalar * i, 0, self.x_scalar, self.y_scalar), 1.5)
+            for i in range(7)
         ]
         self.walk_right: list[pygame.Surface] = [pygame.transform.rotate(image, 90) for image in self.walk_down]
         self.walk_up: list[pygame.Surface] = [pygame.transform.rotate(image, 180) for image in self.walk_down]

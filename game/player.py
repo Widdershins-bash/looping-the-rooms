@@ -9,17 +9,18 @@ import random
 class Player:
     def __init__(self, surface: pygame.Surface, size: int, start_pos: tuple[float, float], sfx: SFX) -> None:
         self.surface: pygame.Surface = surface
-        self.size: int = size
+        self.width: int = 48
+        self.height: int = 34
         self.sfx: SFX = sfx
 
         self.sprite: PlayerSprite = PlayerSprite()
 
-        self.rect_margin: int = self.size // 6
-        self.size -= self.rect_margin * 2
+        self.rect_margin: int = self.width // 6
+        self.width -= self.rect_margin * 2
         self.x_pos: float = start_pos[0]
         self.y_pos: float = start_pos[1]
 
-        self.initial_speed: int = self.size * 7
+        self.initial_speed: int = self.width * 7
         self.speed: float = self.initial_speed
 
         self.mouse_pos: tuple[int, int] = (0, 0)
@@ -83,7 +84,7 @@ class Player:
         return dx, dy
 
     def get_rect(self) -> pygame.Rect:
-        return pygame.Rect(self.x_pos, self.y_pos, self.size, self.size)
+        return pygame.Rect(self.x_pos, self.y_pos, self.width, self.height)
 
     def update_frames(self, delta_time: float):
         self.frame += self.animation_speed * delta_time
