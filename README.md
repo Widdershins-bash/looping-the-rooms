@@ -2,7 +2,7 @@
 
 Looping The Rooms is a dungeon-crawling Pygame project built around room-to-room exploration, looping floor generation, menu-driven state changes, and a steadily growing player movement system. The player navigates a modular dungeon, searches for the exit, collects upgrades, and advances through progressively expanding floors.
 
-This project works as both a playable game jam release and a strong portfolio piece. It shows practical work in game-loop structure, procedural room generation, camera handling, menu/UI systems, collision logic, asset-driven rendering, browser deployment with `pygbag`, and cross-platform debugging between desktop and web builds. 🎮
+This was a project built without AI for a Game Jam that strictly banned any AI usage. It shows practical work in game-loop structure, procedural room generation, camera handling, menu/UI systems, collision logic, asset-driven rendering, browser deployment with `pygbag`, and cross-platform debugging between desktop and web builds. 🎮
 
 ## 🔗 Play On Itch
 
@@ -65,7 +65,7 @@ Inside that loop:
 5. Menus update and draw over the gameplay layer when active.
 6. The logical surface is scaled and presented through the window viewport.
 
-This keeps gameplay, UI, and rendering responsibilities separated in a way that is easy to extend. 🧠
+**This keeps gameplay, UI, and rendering responsibilities separated in a way that is easy to extend.** 🧠
 
 ## 🗂️ File-by-File Overview
 
