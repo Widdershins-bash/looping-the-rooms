@@ -19,8 +19,8 @@ class Menu:
 
 
 class Button:
-    SLIDER_LENGTH: int = 88
-    SLIDER_START_X: int = 20
+    SLIDER_LENGTH: int = 77
+    SLIDER_START_X: int = 41
 
 
 class Camera:

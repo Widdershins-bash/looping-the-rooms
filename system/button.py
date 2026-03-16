@@ -10,42 +10,65 @@ class ButtonConfig:
         self.sprite: ButtonSprite = ButtonSprite()
 
         self.main_buttons: list[Button] = [
-            ActionButton(surface=self.surface, image=self.sprite.play, action=gs.PLAY),
-            ActionButton(surface=self.surface, image=self.sprite.quit, action=gs.QUIT),
+            ActionButton(
+                surface=self.surface, image=self.sprite.play, press_image=self.sprite.play_down, action=gs.PLAY
+            ),
+            ActionButton(
+                surface=self.surface, image=self.sprite.quit, press_image=self.sprite.quit_down, action=gs.QUIT
+            ),
         ]
 
         self.settings_widget: Button = ActionButton(
             surface=self.surface,
             image=self.sprite.settings,
+            press_image=self.sprite.settings_down,
             action=gs.SETTINGS,
             pos=(self.surface.width - self.sprite.y_scalar - m.MENU_MARGIN, m.MENU_MARGIN),
         )
 
         self.settings_buttons: list[Button] = [
-            ActionButton(surface=self.surface, image=self.sprite.menu, action=gs.MAIN_MENU),
+            ActionButton(
+                surface=self.surface, image=self.sprite.menu, press_image=self.sprite.menu_down, action=gs.MAIN_MENU
+            ),
             VolumeSlider(surface=self.surface, image=self.sprite.volume, knob_image=self.sprite.knob),
         ]
 
         self.pause_widget: Button = ActionButton(
             surface=self.surface,
             image=self.sprite.settings,
+            press_image=self.sprite.settings_down,
             action=gs.PAUSE,
             pos=(self.surface.width - self.sprite.y_scalar - m.MENU_MARGIN, m.MENU_MARGIN),
         )
         self.pause_buttons: list[Button] = [
-            ActionButton(surface=self.surface, image=self.sprite.resume, action=gs.PLAY),
-            ActionButton(surface=self.surface, image=self.sprite.menu, action=gs.MAIN_MENU),
+            ActionButton(
+                surface=self.surface, image=self.sprite.resume, press_image=self.sprite.resume_down, action=gs.PLAY
+            ),
+            ActionButton(
+                surface=self.surface, image=self.sprite.menu, press_image=self.sprite.menu_down, action=gs.MAIN_MENU
+            ),
             VolumeSlider(surface=self.surface, image=self.sprite.volume, knob_image=self.sprite.knob),
         ]
 
         self.level_complete_buttons: list[Button] = [
-            ActionButton(surface=self.surface, image=self.sprite.next_level, action=gs.NEXT),
-            ActionButton(surface=self.surface, image=self.sprite.menu, action=gs.MAIN_MENU),
+            ActionButton(
+                surface=self.surface,
+                image=self.sprite.next_level,
+                press_image=self.sprite.next_level_down,
+                action=gs.NEXT,
+            ),
+            ActionButton(
+                surface=self.surface, image=self.sprite.menu, press_image=self.sprite.menu_down, action=gs.MAIN_MENU
+            ),
         ]
 
         self.level_lose_buttons: list[Button] = [
-            ActionButton(surface=self.surface, image=self.sprite.restart, action=gs.PLAY),
-            ActionButton(surface=self.surface, image=self.sprite.menu, action=gs.MAIN_MENU),
+            ActionButton(
+                surface=self.surface, image=self.sprite.restart, press_image=self.sprite.restart_down, action=gs.PLAY
+            ),
+            ActionButton(
+                surface=self.surface, image=self.sprite.menu, press_image=self.sprite.menu_down, action=gs.MAIN_MENU
+            ),
         ]
 
 

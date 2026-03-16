@@ -20,17 +20,52 @@ class ButtonSprite(Image):
 
         self.y_scalar: int = Main.BUTTON_CONSTANT
         self.x_scalar: int = Main.BUTTON_CONSTANT
-        self.sheet: pygame.Surface = self.gen_image(self.path + "tileset.png")
+        self.sheet: pygame.Surface = self.gen_image(self.path + "MenuGui.png")
 
-        self.play: pygame.Surface = self.sheet.subsurface(0, 0, self.x_scalar, self.y_scalar)
-        self.quit: pygame.Surface = self.sheet.subsurface(0, 0, self.x_scalar, self.y_scalar)
-        self.resume: pygame.Surface = self.sheet.subsurface(0, 0, self.x_scalar, self.y_scalar)
-        self.settings: pygame.Surface = self.sheet.subsurface(0, 0, self.y_scalar, self.y_scalar)
-        self.restart: pygame.Surface = self.sheet.subsurface(0, 0, self.y_scalar, self.y_scalar)
-        self.next_level: pygame.Surface = self.sheet.subsurface(0, 0, self.y_scalar, self.y_scalar)
-        self.menu: pygame.Surface = self.sheet.subsurface(0, 0, self.x_scalar, self.y_scalar)
-        self.volume: pygame.Surface = self.sheet.subsurface(0, 0, self.x_scalar, self.y_scalar)
-        self.knob: pygame.Surface = self.sheet.subsurface(0, 0, 18, 18)
+        self.play: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 4, self.y_scalar * 6, self.x_scalar * 4, self.y_scalar
+        )
+        self.play_down: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 8, self.y_scalar * 6, self.x_scalar * 4, self.y_scalar
+        )
+        self.quit: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 4, self.y_scalar * 5, self.x_scalar * 4, self.y_scalar
+        )
+        self.quit_down: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 8, self.y_scalar * 5, self.x_scalar * 4, self.y_scalar
+        )
+        self.resume: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 4, self.y_scalar * 4, self.x_scalar * 4, self.y_scalar
+        )
+        self.resume_down: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 8, self.y_scalar * 4, self.x_scalar * 4, self.y_scalar
+        )
+        self.settings: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 2, self.y_scalar, self.x_scalar, self.y_scalar
+        )
+        self.settings_down: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 3, self.y_scalar, self.x_scalar, self.y_scalar
+        )
+        self.restart: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 4, self.y_scalar * 3, self.x_scalar * 4, self.y_scalar
+        )
+        self.restart_down: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 8, self.y_scalar * 3, self.x_scalar * 4, self.y_scalar
+        )
+        self.next_level: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 4, self.y_scalar * 7, self.x_scalar * 4, self.y_scalar
+        )
+        self.next_level_down: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 8, self.y_scalar * 7, self.x_scalar * 4, self.y_scalar
+        )
+        self.menu: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 4, self.y_scalar * 2, self.x_scalar * 4, self.y_scalar
+        )
+        self.menu_down: pygame.Surface = self.sheet.subsurface(
+            self.x_scalar * 8, self.y_scalar * 2, self.x_scalar * 4, self.y_scalar
+        )
+        self.volume: pygame.Surface = self.sheet.subsurface(0, self.y_scalar * 4, self.x_scalar * 4, self.y_scalar)
+        self.knob: pygame.Surface = self.sheet.subsurface(0, 0, 8, 8)
 
 
 class PlayerSprite(Image):
