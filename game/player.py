@@ -3,14 +3,14 @@ from system.constants import Player as p, ColorPalette as cp
 
 
 class Player:
-    def __init__(self, surface: pygame.Surface, size: int) -> None:
+    def __init__(self, surface: pygame.Surface, size: int, start_pos: tuple[float, float]) -> None:
         self.surface: pygame.Surface = surface
         self.size: int = size
 
         self.rect_margin: int = self.size // 6
         self.size -= self.rect_margin * 2
-        self.x_pos: float = self.surface.width // 2 + self.rect_margin
-        self.y_pos: float = self.surface.height // 2 + self.rect_margin
+        self.x_pos: float = start_pos[0]
+        self.y_pos: float = start_pos[1]
 
         self.initial_speed: int = self.size * 7
         self.speed: float = self.initial_speed
@@ -42,8 +42,8 @@ class Player:
             dx -= self.speed * delta_time
 
         # strictly for debugging
-        if pygame.mouse.get_just_pressed()[0]:
-            self.x_pos, self.y_pos = self.mouse_pos
+        # if pygame.mouse.get_just_pressed()[0]:
+        #     self.x_pos, self.y_pos = self.mouse_pos
 
         return dx, dy
 

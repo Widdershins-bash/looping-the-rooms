@@ -17,7 +17,9 @@ class World:
         self.sfx: SFX = sfx
 
         self.floor_manager: FloorManager = FloorManager(surface=self.surface, grid_constant=self.grid_constant)
-        self.player: Player = Player(surface=self.surface, size=self.grid_constant)
+        self.player: Player = Player(
+            surface=self.surface, size=self.grid_constant, start_pos=self.floor_manager.floor.entrance.center
+        )
         self.camera_offset: tuple[float, float] = (0, 0)
         self.camera: Camera = Camera(surface=self.surface, grid_constant=self.grid_constant)
         self.stat_tracker: Stats = Stats(
@@ -30,7 +32,9 @@ class World:
     def start_world(self, init_state: gs):
         self.game_state = init_state
         self.floor_manager: FloorManager = FloorManager(surface=self.surface, grid_constant=self.grid_constant)
-        self.player: Player = Player(surface=self.surface, size=self.grid_constant)
+        self.player: Player = Player(
+            surface=self.surface, size=self.grid_constant, start_pos=self.floor_manager.floor.entrance.center
+        )
         self.camera_offset: tuple[float, float] = (0, 0)
         self.camera: Camera = Camera(surface=self.surface, grid_constant=self.grid_constant)
 
@@ -42,6 +46,8 @@ class World:
         walls: list[BaseTile] = []
         for room in self.floor_manager.floor.path.values():
             walls.extend(room.wall_map)
+
+        walls.append(self.floor_manager.floor.exit_marker)
 
         return walls
 
@@ -92,7 +98,7 @@ class World:
         if self.player_found_exit():
             self.floor_manager.display_room_found()
             if self.event_ping:
-                pygame.time.set_timer(self.finish_timer_event, 2000, loops=1)
+                pygame.time.set_timer(self.finish_timer_event, 20000, loops=1)
                 self.event_ping = False
 
     def handle_events(self, event: pygame.Event):
@@ -143,7 +149,11 @@ class World:
             self.update_collisions(delta_time=delta_time)
             self.floor_manager.update(camera_offset=self.camera_offset)
             self.player.update(camera_offset=self.camera_offset, viewport=viewport, scale=scale)
-            self.stat_tracker.update(delta_time=delta_time)
+            self.stat_tracker.update(
+                delta_time=delta_time,
+                player_pos=(self.player.x_pos, self.player.y_pos),
+                exit_pos=self.floor_manager.floor.exit.center,
+            )
             self.update_stats_timer()
 
     def draw(self):
@@ -152,4 +162,4 @@ class World:
 
         if self.game_state == gs.PLAY:
             self.draw_alerts()
-            self.stat_tracker.display_stat_box()
+            self.stat_tracker.display_stat_gui()

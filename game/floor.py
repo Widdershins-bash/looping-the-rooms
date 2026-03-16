@@ -61,9 +61,17 @@ class FloorConfiguration:
         self.rows: int = rows
         self.cols: int = columns
 
+        self.possible_spawns: list[tuple[int, int]] = [
+            (0, 0),
+            (0, self.cols - 1),
+            (self.rows - 1, 0),
+            (self.rows - 1, self.cols - 1),
+        ]
+
         self.theme: Theme = random.choice(self.theme_list)
 
         self.entrance: tuple[int, int] = self.get_random_entrance()
+        print(self.possible_spawns)
         self.exit: tuple[int, int] = self.get_random_exit()
 
         self.movement_dict: dict[Direction, tuple[int, int]] = {
@@ -81,16 +89,10 @@ class FloorConfiguration:
         }
 
     def get_random_entrance(self) -> tuple[int, int]:
-        entrance_row: int = 0
-        entrance_col: int = 0
-
-        return entrance_row, entrance_col
+        return self.possible_spawns.pop(random.randint(0, len(self.possible_spawns) - 1))
 
     def get_random_exit(self) -> tuple[int, int]:
-        exit_row: int = self.rows - 1
-        exit_col: int = self.cols - 1  # temp placeholders
-
-        return exit_row, exit_col
+        return self.possible_spawns.pop(random.randint(0, len(self.possible_spawns) - 1))
 
     def check_direction(
         self, row: int, col: int, direction: Direction, room_dict: dict[tuple[int, int], Room]
@@ -129,8 +131,6 @@ class FloorConfiguration:
             random_dir: Direction = random.choice(valid)
             return random_dir
 
-    # TODO in the future, make generate_path retrace it's steps if it has no empty rooms to go to next.
-    # Maybe convert to BSP generation later (if you have more time than you bargained for)
     def generate_path(self) -> dict[tuple[int, int], Room]:
         room_dict: dict[tuple[int, int], Room] = {}
         (ent_row, ent_col), (ex_row, ex_col) = self.entrance, self.exit
@@ -230,6 +230,9 @@ class Floor:
         self.upgrade_room.tile_mesh.append(self.upgrade)
         self.is_upgrade: bool = True
 
+        self.exit_marker: BaseTile = self.set_exit_marker()
+        self.exit.tile_mesh.append(self.exit_marker)
+
     def set_speed_upgrade(self) -> BaseTile:
         item: BaseTile = self.upgrade_room.tile_config.create_item(
             x=int(self.upgrade_room.center[0]),
@@ -237,6 +240,12 @@ class Floor:
             color=cp.YELLOW,
         )
         return item
+
+    def set_exit_marker(self) -> BaseTile:
+        marker: BaseTile = self.exit.tile_config.create_collide(
+            x=int(self.exit.center[0]), y=int(self.exit.center[1]), color=cp.MAGENTA
+        )
+        return marker
 
     def update(self, camera_offset: tuple[float, float]):
         for room in self.path.values():
@@ -487,6 +496,8 @@ class Room:
         for tile in self.tile_mesh:
             tile.x_pos += camera_offset[0]
             tile.y_pos += camera_offset[1]
+
+        self.center = self.x_pos + self.width // 2, self.y_pos + self.height // 2
 
     def draw(self):
         for tile in self.tile_mesh:

@@ -4,8 +4,7 @@ from enum import Enum, auto
 
 class Main:
     BASE_CONSTANT: int = 32  # never used in the game, rather, just used for setting the grid standard
-    BASE_DIVISOR: int = 1
-    GRID_CONSTANT: int = max(6, BASE_CONSTANT // BASE_DIVISOR)  # tile size in px
+    GRID_CONSTANT: int = 32  # tile size in px
     BUTTON_CONSTANT: int = BASE_CONSTANT
 
 
@@ -57,6 +56,7 @@ class ColorPalette:
     MAGENTA: pygame.typing.ColorLike = "#a600ff"
     DARK_GREEN: pygame.typing.ColorLike = "#00731f"
     YELLOW: pygame.typing.ColorLike = "#eaff00"
+    RED: pygame.typing.ColorLike = "#ff0000"
 
 
 class GameState(Enum):
@@ -73,6 +73,8 @@ class GameState(Enum):
 class Font:
     path: str = "assets/fonts/"
     jacq: str = "Jacquard12-Regular.ttf"
-    BASE: pygame.Font = pygame.Font(path + jacq, 20)
-    ACCENTUATED: pygame.Font = pygame.Font(path + jacq, 40)
-    STATS: pygame.Font = pygame.Font(path + jacq, 20)
+    med: str = "medieval.ttf"
+    BASE: pygame.Font = pygame.Font(path + med, 20)
+    ACCENTUATED: pygame.Font = pygame.Font(path + med, 40)
+    STATS: pygame.Font = pygame.Font(path + med, 16)
+    STATS_SMALL: pygame.Font = pygame.Font(path + med, 10)

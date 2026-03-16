@@ -2,9 +2,6 @@ import pygame
 from system.constants import Image as im, Main
 
 
-# NOTE: this will be updated in the future with more classes and definitions to accommodate.
-
-
 class Image:
     def __init__(self) -> None:
         self.path: str = im.IMAGE_PATH
